@@ -55,12 +55,13 @@ import scala.reflect.runtime.universe._
  *   val n2 = Config2.other.fred.as[String]
  * }}}
  *
- * @param relPath
- * @param relConfig
+ * @param relPath Scoping path specifier
+ * @param relConfig Configuration data
  * @author <a href="mailto:fitch@datamininglab.com">Simeon H.K. Fitch</a>
  * @since 3/24/16
  */
 class SSConfig(relPath: String = "", relConfig: TConfig = ConfigFactory.load()) extends Dynamic {
+  def this(config: TConfig) = this("", config)
 
   /**
    * Pulls a value from the configuration with an expected type

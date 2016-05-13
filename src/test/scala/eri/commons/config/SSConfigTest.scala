@@ -26,8 +26,11 @@ class SSConfigTest extends FunSpec {
     it("should allow creation from externally configured config") {
       import scala.collection.JavaConverters._
       val inline = Map("one" -> Int.box(1), "two" -> Int.box(2)).asJava
-      val conf = new SSConfig("", ConfigFactory.parseMap(inline))
+      val conf = new SSConfig(ConfigFactory.parseMap(inline))
       assert(conf.two.as[Int] === 2)
+
+      val prefs = new SSConfig(ConfigFactory.load("something.properties"))
+      assert(prefs.something.as[String] === "nothing")
     }
   }
   describe("configuration types") {
@@ -57,8 +60,11 @@ class SSConfigTest extends FunSpec {
       assert(conf.system.userhome.as[Path] === Paths.get(sys.props("user.home")))
       assert(conf.system.userhome.as[File] === Paths.get(sys.props("user.home")).toFile)
     }
+    it("should support system properties") {
+      println(conf.java.runtime.name.as[String])
+    }
   }
-  describe("behavior of missing config values") {
+  describe("behavior of missing or `Option`al config values") {
     val conf = new SSConfig()
     it("should support `Some`") {
       assert(conf.system.javaversion.asOption[String] === Some(sys.props("java.version")))
