@@ -9,7 +9,7 @@ import org.scalatest.FunSpec
 
 /**
  * Test rig for Scala Simple Config.
- * 
+ *
  * @author <a href="mailto:fitch@datamininglab.com">Simeon H.K.Fitch</a>
  * @since 5/12/16
  */
@@ -39,6 +39,10 @@ class SSConfigTest extends FunSpec {
     it("should support floating point numbers") {
       assert(conf.floats.pointThirtyThree.as[Float] === 0.33f)
       assert(conf.floats.pointThirtyThree.as[Double] === 0.33)
+    }
+    it("should support booleans") {
+      assert(conf.booleans.trueAgain.as[Boolean])
+      assert(!conf.booleans.`false`.as[Boolean])
     }
     it("should support strings") {
       assert(conf.strings.concatenated.as[String] === "null bar 42 baz true 3.14 hi")
