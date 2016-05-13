@@ -51,7 +51,7 @@ val timeout = AkkaConfig.actor.`creation-timeout`.as[Duration].getSeconds
 
 // To bypass the default config loading, pass in results from 
 // ConfigFactory (which also supports traditional Java properties files) 
-val props = SSConfig(ConfigFactory.load("myprops.properties"))
+val props = new SSConfig(ConfigFactory.load("myprops.properties"))
 val version = props.version.as[String]
 ```
 
