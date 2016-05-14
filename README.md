@@ -43,7 +43,7 @@ The library is published via bintray. Add this to your sbt build definitions:
 ```scala
 resolvers += "ERI OSS" at "http://dl.bintray.com/elderresearch/OSS"
 
-libraryDependencies += "com.elderresearch" %% "ssc" % "0.1.0-SNAPSHOT"
+libraryDependencies += "com.elderresearch" %% "ssc" % "0.1.0"
 ```
 
 It will transitively pull in the Typesafe Config and Scala Reflection libraries:
