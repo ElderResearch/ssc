@@ -8,7 +8,7 @@ organization := "com.elderresearch"
 
 scalaVersion := "2.11.8"
 
-scalacOptions += "-target:jvm-1.7"
+scalacOptions += "-target:jvm-1.8"
 
 libraryDependencies ++= Seq(
   "org.scala-lang" %  "scala-reflect"  % scalaVersion.value,

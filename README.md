@@ -49,6 +49,8 @@ It will transitively pull in the Typesafe Config and Scala Reflection libraries:
 "org.scala-lang" %  "scala-reflect"  % scalaVersion.value
 ```
 
+Note: **Requires Java 8**, as does _Typesafe Config_ >= `1.3.0`
+
 ## Examples
 
 ### Basic
