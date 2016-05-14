@@ -1,0 +1,3 @@
+## Initial Release
+
+* Supports field-dereference syntax for _Typesafe Config_ lookups, supporting types `T` and `Option[T]` where `T` is `{Boolean|Int|Double|Long|Float|String|Duration|Path|File|Config|AnyRef}`. 
