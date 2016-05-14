@@ -38,9 +38,11 @@ _Simple Scala Config_ is able to do this via the use of Scala's [`Dynamic`][dsd]
 
 ## Using
 
-The library is published via XXX. Add this to your sbt build definitions:
+The library is published via bintray. Add this to your sbt build definitions:
 
 ```scala
+resolvers += "ERI OSS" at "http://dl.bintray.com/elderresearch/OSS"
+
 libraryDependencies += "com.elderresearch" %% "ssc" % "0.1.0-SNAPSHOT"
 ```
 
