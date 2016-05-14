@@ -29,7 +29,7 @@ class SSConfigTest extends FunSpec {
       val conf = new SSConfig(ConfigFactory.parseMap(inline))
       assert(conf.two.as[Int] === 2)
 
-      val prefs = new SSConfig(ConfigFactory.load("something.properties"))
+      val prefs = new SSConfig(ConfigFactory.load("myprops.properties"))
       assert(prefs.something.as[String] === "nothing")
     }
   }
