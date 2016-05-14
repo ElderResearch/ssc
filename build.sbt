@@ -8,6 +8,8 @@ organization := "com.elderresearch"
 
 scalaVersion := "2.11.8"
 
+scalacOptions += "-target:jvm-1.7"
+
 libraryDependencies ++= Seq(
   "org.scala-lang" %  "scala-reflect"  % scalaVersion.value,
   "com.typesafe" % "config" % "1.3.0",
