@@ -2,6 +2,8 @@
 
 _Typesafe Config wrapped in a [`Dynamic`][dsd] blanket._
 
+[![Build Status](https://travis-ci.org/ElderResearch/ssc.svg?branch=develop)](https://travis-ci.org/ElderResearch/ssc)
+
 ## Overview
 
 [_Typesafe Config_][tc] is about as perfect as an application configuration system can be. [HOCON][hocon] is fantastic to work with, and the underlying Java implementation is both robust and consistent.
