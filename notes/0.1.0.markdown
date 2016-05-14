@@ -1,3 +1,22 @@
 ## Initial Release
 
-* Supports field-dereference syntax for _Typesafe Config_ lookups, supporting types `T` and `Option[T]` where `T` is `{Boolean|Int|Double|Long|Float|String|Duration|Path|File|Config|AnyRef}`. 
+* Supports field-dereference syntax for _Typesafe Config_ lookups, supporting types `T` and `Option[T]` where `T` is `{Boolean|Int|Double|Long|Float|String|Duration|Path|File|Config|AnyRef}`.
+
+
+    `object MyConfig extends SSConfig()`  
+    `val tmp = MyConfig.myapp.tempdir.as[Path]`  
+    `val runtime = MyConfig.java.runtime.name.as[String]`  
+    `val timeout = MyConfig.akka.actor.'creation-timeout'.as[Duration].getSeconds`  
+    `val debugMode = MyConfig.app.debug.asOption[Boolean].getOrElse(false)`  
+
+
+ * Allows nested configuration via optional path parameter:
+
+    `object AkkaConfig extends SSConfig("akka")`  
+    `val akkaVersion = AkkaConfig.version.as[String]`  
+    `val timeout = AkkaConfig.actor.`creation-timeout`.as[Duration].getSeconds`    
+   
+* Allows custom config loading via optional `Config` parameter:
+
+    `val props = new SSConfig(ConfigFactory.load("myprops.properties"))`  
+    `val version = props.version.as[String]`  
