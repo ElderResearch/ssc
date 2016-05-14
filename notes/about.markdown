@@ -1,0 +1,1 @@
+[Simple Scala Config](https://github.com/ElderResearch/ssc) is [Typesafe Config](https://github.com/typesafehub/config) wrapped in a [`Dynamic`](http://www.scala-lang.org/api/2.11.8/#scala.Dynamic) Scala blanket. It is an extremely thin wrapper (less than 100 SLOC), allowing retrieval of configuration values using field-dereference syntax.

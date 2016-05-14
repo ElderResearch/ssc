@@ -2,6 +2,8 @@
 
 _Typesafe Config wrapped in a [`Dynamic`][dsd] blanket._
 
+[![Build Status](https://travis-ci.org/ElderResearch/ssc.svg?branch=develop)](https://travis-ci.org/ElderResearch/ssc)
+
 ## Overview
 
 [_Typesafe Config_][tc] is about as perfect as an application configuration system can be. [HOCON][hocon] is fantastic to work with, and the underlying Java implementation is both robust and consistent.
@@ -36,10 +38,12 @@ _Simple Scala Config_ is able to do this via the use of Scala's [`Dynamic`][dsd]
 
 ## Using
 
-The library is published via XXX. Add this to your sbt build definitions:
+The library is published via bintray. Add this to your sbt build definitions:
 
 ```scala
-libraryDependencies += "com.elderresearch" %% "ssc" % "0.1.0-SNAPSHOT"
+resolvers += "ERI OSS" at "http://dl.bintray.com/elderresearch/OSS"
+
+libraryDependencies += "com.elderresearch" %% "ssc" % "0.1.0"
 ```
 
 It will transitively pull in the Typesafe Config and Scala Reflection libraries:
@@ -48,6 +52,8 @@ It will transitively pull in the Typesafe Config and Scala Reflection libraries:
 "com.typesafe" % "config" % "1.3.0"
 "org.scala-lang" %  "scala-reflect"  % scalaVersion.value
 ```
+
+Note: **Requires Java 8**, as does _Typesafe Config_ >= `1.3.0`
 
 ## Examples
 
