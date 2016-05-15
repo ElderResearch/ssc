@@ -1,8 +1,10 @@
 package eri.commons.config
 
 import java.io.File
+import java.net.InetAddress
 import java.nio.file.{Paths, Path}
 import java.time.Duration
+import java.util.UUID
 
 import com.typesafe.config.Config
 
@@ -43,6 +45,12 @@ object ConfigReader {
   }
   implicit object FileReader extends ConfigReader[File] {
     override def apply(path: String, config: Config): File = PathReader(path, config).toFile
+  }
+  implicit object UUIDReader extends ConfigReader[UUID] {
+    override def apply(path: String, config: Config): UUID = UUID.fromString(config.getString(path))
+  }
+  implicit object InetAddrReader extends ConfigReader[InetAddress] {
+    override def apply(path: String, config: Config): InetAddress = InetAddress.getByName(config.getString(path))
   }
   implicit object ConfigReader extends ConfigReader[Config] {
     override def apply(path: String, config: Config): Config = config.getConfig(path)
