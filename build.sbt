@@ -18,7 +18,7 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
 
-publishMavenStyle := false
+publishMavenStyle := true
 
 bintrayOrganization := Some("elderresearch")
 
