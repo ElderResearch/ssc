@@ -137,12 +137,7 @@ val lv: Long = conf.longVal.as[Long]
 val fv: Float = conf.floatVal.as[Float]
 val sv: String = conf.stringVal.as[String]
 val tv: Duration = conf.durationVal.as[Duration]
-```
-
-The "binary storage size" type supported by _Typesafe Config_ via the `Config.asBytes(String): Long` method has a special accessor, since the return type is `Long` and not (unfortunately) a unique type unto itself:
-
-```tut:book
-val gv: Long = conf.sizeVal.asSize
+val mv: ConfigMemorySize = conf.sizeVal.as[ConfigMemorySize]
 ```
 
 Access to the underlying `Config` object is also supported:
@@ -168,6 +163,7 @@ HOCON supports array values. To retrieve this values, use `as[Seq[T]]` or `asOpt
 
 ```tut:book
 val times = conf.timeVals.as[Seq[Duration]]
+val sizes = conf.sizeVals.as[Seq[ConfigMemorySize]]
 ```
 
 ### Defining New `Reader`s 

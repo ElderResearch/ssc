@@ -36,7 +36,7 @@ You can do this:
 ```scala
 // Load default config file
 val conf = new SSConfig()
-// conf: eri.commons.config.SSConfig = eri.commons.config.SSConfig@4fd7153b
+// conf: eri.commons.config.SSConfig = eri.commons.config.SSConfig@557f9df1
 
 // Get required config value
 val timeout = conf.akka.actor.typed.timeout.as[Duration]
@@ -108,7 +108,7 @@ To bypass the default config loading, pass in results from `ConfigFactory` (whic
 
 ```scala
 val props = new SSConfig(ConfigFactory.load("myprops.properties"))
-// props: eri.commons.config.SSConfig = eri.commons.config.SSConfig@3b60ce5
+// props: eri.commons.config.SSConfig = eri.commons.config.SSConfig@d039299
 
 val version = props.version.as[String]
 // version: String = "1.2.3"
@@ -164,13 +164,9 @@ val sv: String = conf.stringVal.as[String]
 
 val tv: Duration = conf.durationVal.as[Duration]
 // tv: java.time.Duration = PT0.0000004S
-```
 
-The "binary storage size" type supported by _Typesafe Config_ via the `Config.asBytes(String): Long` method has a special accessor, since the return type is `Long` and not (unfortunately) a unique type unto itself:
-
-```scala
-val gv: Long = conf.sizeVal.asSize
-// gv: Long = 500000000
+val mv: ConfigMemorySize = conf.sizeVal.as[ConfigMemorySize]
+// mv: com.typesafe.config.ConfigMemorySize = ConfigMemorySize(500000000)
 ```
 
 Access to the underlying `Config` object is also supported:
@@ -205,6 +201,9 @@ HOCON supports array values. To retrieve this values, use `as[Seq[T]]` or `asOpt
 ```scala
 val times = conf.timeVals.as[Seq[Duration]]
 // times: Seq[java.time.Duration] = Buffer(PT1M, PT5M, PT15M, PT30M, PT45M, PT1H)
+
+val sizes = conf.sizeVals.as[Seq[ConfigMemorySize]]
+// sizes: Seq[com.typesafe.config.ConfigMemorySize] = Buffer(ConfigMemorySize(512), ConfigMemorySize(1048576), ConfigMemorySize(2147483648), ConfigMemorySize(3298534883328), ConfigMemorySize(4503599627370496))
 ```
 
 ### Defining New `Reader`s 

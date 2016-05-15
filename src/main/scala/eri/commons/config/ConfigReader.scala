@@ -6,7 +6,7 @@ import java.nio.file.{Paths, Path}
 import java.time.Duration
 import java.util.UUID
 import scala.collection.JavaConversions._
-import com.typesafe.config.Config
+import com.typesafe.config.{ConfigMemorySize, Config}
 
 /**
  * Typeclass specification and default implementations for reading a specific type from a `Config`
@@ -75,6 +75,13 @@ object ConfigReader {
   implicit object FloatSeqReader extends ConfigReader[Seq[Float]] {
     def apply(path: String, config: Config): Seq[Float] =
       LongSeqReader(path, config).map(_.toFloat)
+  }
+  implicit object MemorySizeReader extends ConfigReader[ConfigMemorySize] {
+    def apply(path: String, config: Config): ConfigMemorySize = config.getMemorySize(path)
+  }
+  implicit object MemorySizeSeqReader extends ConfigReader[Seq[ConfigMemorySize]] {
+    def apply(path: String, config: Config): Seq[ConfigMemorySize] =
+      config.getMemorySizeList(path)
   }
   implicit object StringReader extends ConfigReader[String] {
     def apply(path: String, config: Config): String = config.getString(path)

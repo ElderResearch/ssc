@@ -69,9 +69,6 @@ class SSConfig(relPath: String = "", relConfig: TConfig = ConfigFactory.load()) 
     reader(relPath, relConfig)
   }
 
-  /** Special case accessor for values defined in config using typical memory size suffixes (G, M, K etc.)*/
-  def asSize = relConfig.getBytes(relPath)
-
   /**
    * Same as `as[A]` except result is wrapped in an Option[A].
    * You get a `None` instead of a thrown exception when the configuration path doesn't exist

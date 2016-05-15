@@ -1,12 +1,12 @@
 package eri.commons.config
 
 import java.io.File
-import java.net.{ UnknownHostException, InetAddress }
-import java.nio.file.{ Paths, Path }
+import java.net.InetAddress
+import java.nio.file.{Path, Paths}
 import java.time.Duration
 import java.util.UUID
 
-import com.typesafe.config.{ ConfigException, ConfigFactory }
+import com.typesafe.config.{ConfigException, ConfigFactory, ConfigMemorySize}
 import org.scalatest.FunSpec
 
 /**
@@ -56,7 +56,7 @@ class SSConfigTest extends FunSpec {
       assert(conf.durations.halfSecond.as[Duration] === Duration.ofMillis(500))
     }
     it("should support sizes") {
-      assert(conf.memsizes.meg.asSize === 1024 * 1024)
+      assert(conf.memsizes.meg.as[ConfigMemorySize].toBytes === 1024 * 1024)
     }
     it("should support paths") {
       assert(conf.system.userhome.as[Path] === Paths.get(sys.props("user.home")))
