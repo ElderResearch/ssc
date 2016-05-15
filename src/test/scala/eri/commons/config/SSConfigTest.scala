@@ -1,10 +1,12 @@
 package eri.commons.config
 
 import java.io.File
-import java.nio.file.{Paths, Path}
+import java.net.InetAddress
+import java.nio.file.{Path, Paths}
 import java.time.Duration
+import java.util.UUID
 
-import com.typesafe.config.{ConfigException, ConfigFactory}
+import com.typesafe.config.{ConfigException, ConfigFactory, ConfigMemorySize}
 import org.scalatest.FunSpec
 
 /**
@@ -33,7 +35,7 @@ class SSConfigTest extends FunSpec {
       assert(prefs.something.as[String] === "nothing")
     }
   }
-  describe("configuration types") {
+  describe("base configuration types") {
     val conf = new SSConfig()
     it("should support integers") {
       assert(conf.ints.fortyTwo.as[Int] === 42)
@@ -54,14 +56,28 @@ class SSConfigTest extends FunSpec {
       assert(conf.durations.halfSecond.as[Duration] === Duration.ofMillis(500))
     }
     it("should support sizes") {
-      assert(conf.memsizes.meg.asSize === 1024 * 1024)
+      assert(conf.memsizes.meg.as[ConfigMemorySize].toBytes === 1024 * 1024)
     }
     it("should support paths") {
       assert(conf.system.userhome.as[Path] === Paths.get(sys.props("user.home")))
       assert(conf.system.userhome.as[File] === Paths.get(sys.props("user.home")).toFile)
     }
-    it("should support system properties") {
-      println(conf.java.runtime.name.as[String])
+    it("should support UUIDs") {
+      val uuid = conf.extended.uuid.as[UUID]
+      assert(uuid.version() === 4)
+
+      intercept[IllegalArgumentException] {
+        conf.extended.notUuid.as[UUID]
+      }
+    }
+    it("should support InetAddress") {
+      val addr1 = conf.extended.addr1.as[InetAddress]
+      val addr2 = conf.extended.addr2.as[InetAddress]
+      val addr3 = conf.extended.addr3.as[InetAddress]
+
+      intercept[Exception] {
+        conf.extended.notAddr.as[InetAddress]
+      }
     }
   }
   describe("behavior of missing or `Option`al config values") {
@@ -76,6 +92,47 @@ class SSConfigTest extends FunSpec {
       intercept[ConfigException] {
         conf.system.oops.as[String]
       }
+    }
+  }
+  describe("sequence configuration types") {
+    val conf = new SSConfig()
+    it("should support boolean sequence") {
+      assert(conf.arrays.ofBoolean.as[Seq[Boolean]] === Seq(true, false))
+    }
+    it("should support int sequence") {
+      assert(conf.arrays.ofInt.as[Seq[Int]] === Seq(1, 2, 3))
+    }
+    it("should support double sequence") {
+      assert(conf.arrays.ofDouble.as[Seq[Double]] === Seq(3.14, 4.14, 5.14))
+    }
+    it("should support string sequence") {
+      assert(conf.arrays.ofString.as[Seq[String]] === Seq("a", "b", "c"))
+    }
+    it("should support duration sequence") {
+      assert(conf.durations.secondsList.as[Seq[Duration]] === Seq(1l, 2l, 3l, 4l).map(Duration.ofSeconds))
+    }
+    it("should support Inet address sequence") {
+      assert(conf.extended.addresses.as[Seq[InetAddress]] === Seq("192.168.32.42", "0:0:0:0:0:0:0:1").map(InetAddress.getByName))
+    }
+
+  }
+  describe("miscellaneous features") {
+    val conf = new SSConfig()
+    it("should support system properties") {
+      assert(conf.java.runtime.name.as[String].contains("Java"))
+    }
+    it("should allow custom types") {
+      case class PhoneNumber(countryCode: Int, areaCode: Int, exchange: Int, extension: Int)
+      implicit object PhoneReader extends StringReader[PhoneNumber] {
+        val pat = "(\\d)-(\\d+)-(\\d+)-(\\d+)".r
+        def apply(valueStr: String): PhoneNumber = {
+          val pat(cc, ac, ex, et) = valueStr
+          PhoneNumber(cc.toInt, ac.toInt, ex.toInt, et.toInt)
+        }
+      }
+
+      val phone = conf.my.phone.as[PhoneNumber]
+      assert(phone.extension === 1212)
     }
   }
 }

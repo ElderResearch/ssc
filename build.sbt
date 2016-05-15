@@ -2,7 +2,7 @@ name := "Simple Scala Config"
 
 moduleName := "ssc"
 
-version := "0.1.0"
+version := "0.2.0"
 
 organization := "com.elderresearch"
 
@@ -25,3 +25,7 @@ bintrayOrganization := Some("elderresearch")
 bintrayRepository := "OSS"
 
 bintrayReleaseOnPublish in ThisBuild := false
+
+tutSettings
+
+tutTargetDirectory := baseDirectory.value
