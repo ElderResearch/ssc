@@ -3,6 +3,7 @@
 _Typesafe Config wrapped in a [`Dynamic`][dsd] blanket._
 
 [![Build Status](https://travis-ci.org/ElderResearch/ssc.svg?branch=master)](https://travis-ci.org/ElderResearch/ssc)
+[ ![Download](https://api.bintray.com/packages/elderresearch/OSS/ssc/images/download.svg) ](https://bintray.com/elderresearch/OSS/ssc/_latestVersion)
 
 ## Overview
 
@@ -36,7 +37,7 @@ You can do this:
 ```scala
 // Load default config file
 val conf = new SSConfig()
-// conf: eri.commons.config.SSConfig = eri.commons.config.SSConfig@71714fef
+// conf: eri.commons.config.SSConfig = eri.commons.config.SSConfig@774b5084
 
 // Get required config value
 val timeout = conf.akka.actor.typed.timeout.as[Duration]
@@ -107,7 +108,7 @@ To bypass the default config loading, pass in results from `ConfigFactory` (whic
 
 ```scala
 val props = new SSConfig(ConfigFactory.load("myprops.properties"))
-// props: eri.commons.config.SSConfig = eri.commons.config.SSConfig@a0c83fa
+// props: eri.commons.config.SSConfig = eri.commons.config.SSConfig@7be7fa9a
 
 val version = props.version.as[String]
 // version: String = "1.2.3"

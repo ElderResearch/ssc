@@ -3,6 +3,7 @@
 _Typesafe Config wrapped in a [`Dynamic`][dsd] blanket._
 
 [![Build Status](https://travis-ci.org/ElderResearch/ssc.svg?branch=master)](https://travis-ci.org/ElderResearch/ssc)
+[ ![Download](https://api.bintray.com/packages/elderresearch/OSS/ssc/images/download.svg) ](https://bintray.com/elderresearch/OSS/ssc/_latestVersion)
 
 ## Overview
 
