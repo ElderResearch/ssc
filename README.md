@@ -36,7 +36,7 @@ You can do this:
 ```scala
 // Load default config file
 val conf = new SSConfig()
-// conf: eri.commons.config.SSConfig = eri.commons.config.SSConfig@557f9df1
+// conf: eri.commons.config.SSConfig = eri.commons.config.SSConfig@71714fef
 
 // Get required config value
 val timeout = conf.akka.actor.typed.timeout.as[Duration]
@@ -55,8 +55,7 @@ The library is published via bintray. Add this to your sbt build definitions:
 
 ```scala
 resolvers += "ERI OSS" at "http://dl.bintray.com/elderresearch/OSS"
-
-libraryDependencies += "com.elderresearch" %% "ssc" % "0.1.0"
+libraryDependencies += "com.elderresearch" %% "ssc" % "0.2.0"
 ```
 
 It will transitively pull in the Typesafe Config and Scala Reflection libraries:
@@ -108,7 +107,7 @@ To bypass the default config loading, pass in results from `ConfigFactory` (whic
 
 ```scala
 val props = new SSConfig(ConfigFactory.load("myprops.properties"))
-// props: eri.commons.config.SSConfig = eri.commons.config.SSConfig@d039299
+// props: eri.commons.config.SSConfig = eri.commons.config.SSConfig@a0c83fa
 
 val version = props.version.as[String]
 // version: String = "1.2.3"
@@ -208,7 +207,7 @@ val sizes = conf.sizeVals.as[Seq[ConfigMemorySize]]
 
 ### Defining New `Reader`s 
 
-Both standard and core types are extracted through the `as[T]` and `asOption[T]` methods via [`ConfigReader[T]`](src/main/scala/eri/commons/config/ConfigReader.scala) and `StringReader[T]` typeclasses. To define a converter from a `String` to your desired type `Foo`, place in scope an `implicit` instance of `StringReader[Foo]`. For example, supposed we wanted to support reading in a phone number type:  
+Both standard and core types are extracted through the `as[T]` and `asOption[T]` methods via [`ConfigReader[T]`](src/main/scala/eri/commons/config/ConfigReader.scala) and `StringReader[T]` type classes. To define a converter from a `String` to your desired type `Foo`, place in scope an `implicit` instance of `StringReader[Foo]`. For example, supposed we wanted to support reading in a phone number type:  
  
 ```scala
 case class PhoneNumber(countryCode: Int, areaCode: Int, exchange: Int, extension: Int)
