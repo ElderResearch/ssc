@@ -75,7 +75,7 @@ class SSConfigTest extends FunSpec {
       val addr2 = conf.extended.addr2.as[InetAddress]
       val addr3 = conf.extended.addr3.as[InetAddress]
 
-      intercept[UnknownHostException] {
+      intercept[Exception] {
         conf.extended.notAddr.as[InetAddress]
       }
     }
