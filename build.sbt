@@ -25,3 +25,7 @@ bintrayOrganization := Some("elderresearch")
 bintrayRepository := "OSS"
 
 bintrayReleaseOnPublish in ThisBuild := false
+
+tutSettings
+
+tutTargetDirectory := baseDirectory.value

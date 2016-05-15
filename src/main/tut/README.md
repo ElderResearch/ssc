@@ -12,39 +12,38 @@ However, as a Scala developer, I'm not immune to wanting a little extra "sugar" 
 
 So instead of doing this:
 
+```tut:invisible
+import eri.commons.config._
+import java.io.File
+import java.nio.file.Path
+import java.net.InetAddress
+import java.util.UUID
+import java.time.Duration
+import com.typesafe.config._
+```
 
-
-
-```scala
+```tut:silent
 // Load default config file
 val conf = ConfigFactory.load()
 ```
-```scala
+```tut:book
 // Get required config value
 val timeout = conf.getDuration("akka.actor.typed.timeout")
-// timeout: java.time.Duration = PT2S
-
 // Get maybe existing config value
 val abort = if (conf.hasPath("app.shouldAbort")) {
   conf.getBoolean("app.shouldAbort")
 } else false
-// abort: Boolean = false
 ```
 
 You can do this:
 
-```scala
+```tut:book
 // Load default config file
 val conf = new SSConfig()
-// conf: eri.commons.config.SSConfig = eri.commons.config.SSConfig@4fd7153b
-
 // Get required config value
 val timeout = conf.akka.actor.typed.timeout.as[Duration]
-// timeout: java.time.Duration = PT2S
-
 // Get maybe existing config value
 val abort = conf.app.shouldAbort.asOption[Boolean].getOrElse(false)
-// abort: Boolean = false
 ```
 
 _Simple Scala Config_ is able to do this via the use of Scala's [`Dynamic`][dsd] facility. I find using this wrapper a bit more "idiomaticaly Scala" without being too far removed from the core library.  The downside to using it is the configuration dereferencing _looks_ like it is valid--due to the compiler accepting it--but in reality, dereferencing errors will be detected at runtime (just as they would with the core _Typesafe Config_), unless you always use the `asOption[T]` transform.
@@ -74,44 +73,31 @@ Note: **Requires Java 8**, as does _Typesafe Config_ >= `1.3.0`
 
 To use the default config loader in the root scope, instantiate or subclass `SSConfig`:
 
-```scala
+```tut:book
 object MyConfig extends SSConfig()
-// defined object MyConfig
-
 // SSC adds support for Java `Path`
 val tmp = MyConfig.myapp.tempdir.as[Path]
-// tmp: java.nio.file.Path = /tmp/foo
-
 // NB: Typesafe Config merges in system properties for you
 val runtime = MyConfig.java.runtime.name.as[String]
-// runtime: String = Java(TM) SE Runtime Environment
 ```
 
 ### Nested Scope
 
 To specify a nested scope, pass the path string into the constructor:
 
-```scala
+```tut:book
 object AkkaConfig extends SSConfig("akka")
-// defined object AkkaConfig
-
 val akkaVersion = AkkaConfig.version.as[String]
-// akkaVersion: String = 2.3.15
-
 val timeout = AkkaConfig.actor.`creation-timeout`.as[Duration].getSeconds
-// timeout: Long = 3
 ```
 
 ### Custom Loading
 
 To bypass the default config loading, pass in results from `ConfigFactory` (which also supports traditional Java properties files):
 
-```scala
+```tut:book
 val props = new SSConfig(ConfigFactory.load("myprops.properties"))
-// props: eri.commons.config.SSConfig = eri.commons.config.SSConfig@3b60ce5
-
 val version = props.version.as[String]
-// version: String = "1.2.3"
 ```
 
 ### Supported Types
@@ -120,7 +106,7 @@ val version = props.version.as[String]
 
 The standard _Typesafe Config_ types are supported via a type parameter to the `as[T]` and `asOption[T]` methods:
 
-```scala
+```tut:silent
 // Define an example in-line config
 val src =
   """
@@ -143,78 +129,53 @@ val src =
   """.stripMargin
 val conf = new SSConfig(ConfigFactory.parseString(src))
 ```
-```scala
+```tut:book
 val bv: Boolean = conf.booleanVal.as[Boolean]
-// bv: Boolean = true
-
 val iv: Int = conf.intVal.as[Int]
-// iv: Int = 3
-
 val dv: Double = conf.doubleVal.as[Double]
-// dv: Double = 1.0E-200
-
 val lv: Long = conf.longVal.as[Long]
-// lv: Long = 4878955355435272204
-
 val fv: Float = conf.floatVal.as[Float]
-// fv: Float = 3.14
-
 val sv: String = conf.stringVal.as[String]
-// sv: String = Ceci n'est pas une pipe.
-
 val tv: Duration = conf.durationVal.as[Duration]
-// tv: java.time.Duration = PT0.0000004S
 ```
 
 The "binary storage size" type supported by _Typesafe Config_ via the `Config.asBytes(String): Long` method has a special accessor, since the return type is `Long` and not (unfortunately) a unique type unto itself:
 
-```scala
+```tut:book
 val gv: Long = conf.sizeVal.asSize
-// gv: Long = 500000000
 ```
 
 Access to the underlying `Config` object is also supported:
 
-```scala
+```tut:book
 val cv: Config = conf.configVal.as[Config]
-// cv: com.typesafe.config.Config = Config(SimpleConfigObject({"a":1,"b":2,"c":3}))
 ```
 
 #### Extended Type Support 
 
 In addition to the types supported by _Typesafe Config_, converters for some additional Java types are provided (see [Defining New Readers](#defining-new-readers) below for instructions on adding your own.):
 
-```scala
+```tut:book
 val pv: Path = conf.pathVal.as[Path]
-// pv: java.nio.file.Path = /dev/null
-
 val zv: File = conf.fileVal.as[File]
-// zv: java.io.File = /dev/zero
-
 val av: InetAddress = conf.addrVal.as[InetAddress]
-// av: java.net.InetAddress = /192.168.34.42
-
 val uv: UUID = conf.uuidVal.as[UUID]
-// uv: java.util.UUID = fed6cc29-1cc4-46ed-9c04-56261730f44c
 ```
 
 ### Array/Sequence Values
 
 HOCON supports array values. To retrieve this values, use `as[Seq[T]]` or `asOption[Seq[T]]`. For any type `T` you should be able to also retrieve `Seq[T]` if defined in an HOCON array.
 
-```scala
+```tut:book
 val times = conf.timeVals.as[Seq[Duration]]
-// times: Seq[java.time.Duration] = Buffer(PT1M, PT5M, PT15M, PT30M, PT45M, PT1H)
 ```
 
 ### Defining New `Reader`s 
 
 Both standard and core types are extracted through the `as[T]` and `asOption[T]` methods via [`ConfigReader[T]`](src/main/scala/eri/commons/config/ConfigReader.scala) and `StringReader[T]` typeclasses. To define a converter from a `String` to your desired type `Foo`, place in scope an `implicit` instance of `StringReader[Foo]`. For example, supposed we wanted to support reading in a phone number type:  
  
-```scala
+```tut:book
 case class PhoneNumber(countryCode: Int, areaCode: Int, exchange: Int, extension: Int)
-// defined class PhoneNumber
-
 implicit object PhoneReader extends StringReader[PhoneNumber] {
   val pat = "(\\d)-(\\d+)-(\\d+)-(\\d+)".r
   def apply(valueStr: String): PhoneNumber = {
@@ -222,10 +183,7 @@ implicit object PhoneReader extends StringReader[PhoneNumber] {
     PhoneNumber(cc.toInt, ac.toInt, ex.toInt, et.toInt)
   }
 }
-// defined object PhoneReader
-
 val phone = conf.phoneVal.as[PhoneNumber]
-// phone: PhoneNumber = PhoneNumber(1,881,555,1212)
 ```
 
 ## License

@@ -119,7 +119,20 @@ class SSConfigTest extends FunSpec {
   describe("miscellaneous features") {
     val conf = new SSConfig()
     it("should support system properties") {
-      println(conf.java.runtime.name.as[String])
+      assert(conf.java.runtime.name.as[String].contains("Java"))
+    }
+    it("should allow custom types") {
+      case class PhoneNumber(countryCode: Int, areaCode: Int, exchange: Int, extension: Int)
+      implicit object PhoneReader extends StringReader[PhoneNumber] {
+        val pat = "(\\d)-(\\d+)-(\\d+)-(\\d+)".r
+        def apply(valueStr: String): PhoneNumber = {
+          val pat(cc, ac, ex, et) = valueStr
+          PhoneNumber(cc.toInt, ac.toInt, ex.toInt, et.toInt)
+        }
+      }
+
+      val phone = conf.my.phone.as[PhoneNumber]
+      assert(phone.extension === 1212)
     }
   }
 }
