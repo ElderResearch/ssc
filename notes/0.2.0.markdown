@@ -1,0 +1,12 @@
+## New Features
+
+* Added support for HOCON array values through `as[Seq[T]]` and `asOption[Seq[T]]`
+* Converted value extraction to use user-extensible typeclass pattern. See [README](https://github.com/ElderResearch/ssc#defining-new-readers) for details.
+
+## Changes
+
+* `README` examples processed with [`tut`](https://github.com/tpolecat/tut). (Thanks @tpolecat) 
+ 
+## Breaking Changes
+ 
+* `asSize` has gone away in preference for `as[ConfigMemorySize]`, which normalizes it's usage with rest of API.
