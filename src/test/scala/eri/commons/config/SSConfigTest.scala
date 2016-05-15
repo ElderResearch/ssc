@@ -35,7 +35,7 @@ class SSConfigTest extends FunSpec {
       assert(prefs.something.as[String] === "nothing")
     }
   }
-  describe("configuration types") {
+  describe("base configuration types") {
     val conf = new SSConfig()
     it("should support integers") {
       assert(conf.ints.fortyTwo.as[Int] === 42)
@@ -93,6 +93,28 @@ class SSConfigTest extends FunSpec {
         conf.system.oops.as[String]
       }
     }
+  }
+  describe("sequence configuration types") {
+    val conf = new SSConfig()
+    it("should support boolean sequence") {
+      assert(conf.arrays.ofBoolean.as[Seq[Boolean]] === Seq(true, false))
+    }
+    it("should support int sequence") {
+      assert(conf.arrays.ofInt.as[Seq[Int]] === Seq(1, 2, 3))
+    }
+    it("should support double sequence") {
+      assert(conf.arrays.ofDouble.as[Seq[Double]] === Seq(3.14, 4.14, 5.14))
+    }
+    it("should support string sequence") {
+      assert(conf.arrays.ofString.as[Seq[String]] === Seq("a", "b", "c"))
+    }
+    it("should support duration sequence") {
+      assert(conf.durations.secondsList.as[Seq[Duration]] === Seq(1l, 2l, 3l, 4l).map(Duration.ofSeconds))
+    }
+    it("should support Inet address sequence") {
+      assert(conf.extended.addresses.as[Seq[InetAddress]] === Seq("192.168.32.42", "0:0:0:0:0:0:0:1").map(InetAddress.getByName))
+    }
+
   }
   describe("miscellaneous features") {
     val conf = new SSConfig()

@@ -5,7 +5,7 @@ import java.net.InetAddress
 import java.nio.file.{Paths, Path}
 import java.time.Duration
 import java.util.UUID
-
+import scala.collection.JavaConversions._
 import com.typesafe.config.Config
 
 /**
@@ -18,45 +18,101 @@ trait ConfigReader[T] {
   def apply(path: String, config: Config): T
 }
 
+trait StringReader[T] {
+  def apply(valueStr: String): T
+}
+
+object StringReader {
+  // ---- Custom Type Readers ----
+  implicit object PathReader extends StringReader[Path] {
+    def apply(valueStr: String): Path = Paths.get(valueStr)
+  }
+  implicit object FileReader extends StringReader[File] {
+    def apply(valueStr: String): File = PathReader(valueStr).toFile
+  }
+  implicit object UUIDReader extends StringReader[UUID] {
+    def apply(valueStr: String): UUID = UUID.fromString(valueStr)
+  }
+  implicit object InetAddrReader extends StringReader[InetAddress] {
+    def apply(valueStr: String): InetAddress = InetAddress.getByName(valueStr)
+  }
+}
+
 object ConfigReader {
+  // ---- Native Typesafe Config Type Readers ----
   implicit object BooleanReader extends ConfigReader[Boolean] {
-    override def apply(path: String, config: Config): Boolean = config.getBoolean(path)
+    def apply(path: String, config: Config): Boolean = config.getBoolean(path)
+  }
+  implicit object BooleanSeqReader extends ConfigReader[Seq[Boolean]] {
+    def apply(path: String, config: Config): Seq[Boolean] =
+      config.getBooleanList(path).map(_.booleanValue())
   }
   implicit object IntReader extends ConfigReader[Int] {
-    override def apply(path: String, config: Config): Int = config.getInt(path)
+    def apply(path: String, config: Config): Int = config.getInt(path)
+  }
+  implicit object IntSeqReader extends ConfigReader[Seq[Int]] {
+    def apply(path: String, config: Config): Seq[Int] =
+      config.getIntList(path).map(_.intValue())
   }
   implicit object DoubleReader extends ConfigReader[Double] {
-    override def apply(path: String, config: Config): Double = config.getDouble(path)
+    def apply(path: String, config: Config): Double = config.getDouble(path)
+  }
+  implicit object DoubleSeqReader extends ConfigReader[Seq[Double]] {
+    def apply(path: String, config: Config): Seq[Double] =
+      config.getDoubleList(path).map(_.doubleValue())
   }
   implicit object LongReader extends ConfigReader[Long] {
-    override def apply(path: String, config: Config): Long = config.getLong(path)
+    def apply(path: String, config: Config): Long = config.getLong(path)
+  }
+  implicit object LongSeqReader extends ConfigReader[Seq[Long]] {
+    def apply(path: String, config: Config): Seq[Long] =
+      config.getLongList(path).map(_.longValue())
   }
   implicit object FloatReader extends ConfigReader[Float] {
-    override def apply(path: String, config: Config): Float = config.getDouble(path).toFloat
+    def apply(path: String, config: Config): Float =
+      config.getDouble(path).toFloat
+  }
+  implicit object FloatSeqReader extends ConfigReader[Seq[Float]] {
+    def apply(path: String, config: Config): Seq[Float] =
+      LongSeqReader(path, config).map(_.toFloat)
   }
   implicit object StringReader extends ConfigReader[String] {
-    override def apply(path: String, config: Config): String = config.getString(path)
+    def apply(path: String, config: Config): String = config.getString(path)
+  }
+  implicit object StringSeqReader extends ConfigReader[Seq[String]] {
+    def apply(path: String, config: Config): Seq[String] =
+      config.getStringList(path)
   }
   implicit object DurationReader extends ConfigReader[Duration] {
-    override def apply(path: String, config: Config): Duration = config.getDuration(path)
+    def apply(path: String, config: Config): Duration = config.getDuration(path)
   }
-  implicit object PathReader extends ConfigReader[Path] {
-    override def apply(path: String, config: Config): Path = Paths.get(config.getString(path))
-  }
-  implicit object FileReader extends ConfigReader[File] {
-    override def apply(path: String, config: Config): File = PathReader(path, config).toFile
-  }
-  implicit object UUIDReader extends ConfigReader[UUID] {
-    override def apply(path: String, config: Config): UUID = UUID.fromString(config.getString(path))
-  }
-  implicit object InetAddrReader extends ConfigReader[InetAddress] {
-    override def apply(path: String, config: Config): InetAddress = InetAddress.getByName(config.getString(path))
+  implicit object DurationSeqReader extends ConfigReader[Seq[Duration]] {
+    def apply(path: String, config: Config): Seq[Duration] = config.getDurationList(path)
   }
   implicit object ConfigReader extends ConfigReader[Config] {
-    override def apply(path: String, config: Config): Config = config.getConfig(path)
+    def apply(path: String, config: Config): Config = config.getConfig(path)
   }
   implicit object AnyRefReader extends ConfigReader[AnyRef] {
-    override def apply(path: String, config: Config): AnyRef = config.getObject(path)
+    def apply(path: String, config: Config): AnyRef = config.getObject(path)
+  }
+  implicit object AnyRefSeqReader extends ConfigReader[Seq[AnyRef]] {
+    def apply(path: String, config: Config): Seq[AnyRef] =
+      config.getObjectList(path)
   }
 
+  /** Given a `StringReader[T]`, creates a `ConfigReader[T]` */
+  implicit def customConfigReader[T: StringReader]: ConfigReader[T] = new ConfigReader[T] {
+    override def apply(path: String, config: Config): T = {
+      val reader = implicitly[StringReader[T]]
+      reader(config.getString(path))
+    }
+  }
+
+  /** Given a `StringReader[T]`, creates a `ConfigReader[Seq[T]]` */
+  implicit def customConfigSeqReader[T: StringReader]: ConfigReader[Seq[T]] = new ConfigReader[Seq[T]] {
+    def apply(path: String, config: Config): Seq[T] = {
+      val reader = implicitly[StringReader[T]]
+      config.getStringList(path).map(reader.apply)
+    }
+  }
 }
