@@ -3,6 +3,7 @@
 _Typesafe Config wrapped in a [`Dynamic`][dsd] blanket._
 
 [![Build Status](https://travis-ci.org/ElderResearch/ssc.svg?branch=master)](https://travis-ci.org/ElderResearch/ssc)
+[ ![Download](https://api.bintray.com/packages/elderresearch/OSS/ssc/images/download.svg) ](https://bintray.com/elderresearch/OSS/ssc/_latestVersion)
 
 ## Overview
 
@@ -54,8 +55,7 @@ The library is published via bintray. Add this to your sbt build definitions:
 
 ```scala
 resolvers += "ERI OSS" at "http://dl.bintray.com/elderresearch/OSS"
-
-libraryDependencies += "com.elderresearch" %% "ssc" % "0.1.0"
+libraryDependencies += "com.elderresearch" %% "ssc" % "0.2.0"
 ```
 
 It will transitively pull in the Typesafe Config and Scala Reflection libraries:
@@ -168,7 +168,7 @@ val sizes = conf.sizeVals.as[Seq[ConfigMemorySize]]
 
 ### Defining New `Reader`s 
 
-Both standard and core types are extracted through the `as[T]` and `asOption[T]` methods via [`ConfigReader[T]`](src/main/scala/eri/commons/config/ConfigReader.scala) and `StringReader[T]` typeclasses. To define a converter from a `String` to your desired type `Foo`, place in scope an `implicit` instance of `StringReader[Foo]`. For example, supposed we wanted to support reading in a phone number type:  
+Both standard and core types are extracted through the `as[T]` and `asOption[T]` methods via [`ConfigReader[T]`](src/main/scala/eri/commons/config/ConfigReader.scala) and `StringReader[T]` type classes. To define a converter from a `String` to your desired type `Foo`, place in scope an `implicit` instance of `StringReader[Foo]`. For example, supposed we wanted to support reading in a phone number type:  
  
 ```tut:book
 case class PhoneNumber(countryCode: Int, areaCode: Int, exchange: Int, extension: Int)
