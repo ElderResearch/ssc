@@ -15,15 +15,9 @@
 
 package eri.commons.config
 
-import java.io.File
-import java.nio.file.{Path, Paths}
-import java.time.Duration
-
-import com.typesafe.config.ConfigException
-import com.typesafe.config.{Config ⇒ TConfig, ConfigFactory}
+import com.typesafe.config.{Config ⇒ TConfig, ConfigException, ConfigFactory}
 
 import scala.language.dynamics
-import scala.reflect.runtime.universe._
 
 /**
  * This class serves as a convenience entry point into configuration items.
@@ -70,26 +64,9 @@ class SSConfig(relPath: String = "", relConfig: TConfig = ConfigFactory.load()) 
    * @return configuration value
    */
   @throws[ConfigException.Generic]("Type parameter not specified or not supported")
-  def as[A: TypeTag] = {
-    (implicitly[TypeTag[A]] match {
-      case TypeTag.Boolean ⇒ relConfig.getBoolean(relPath)
-      case TypeTag.Int ⇒ relConfig.getInt(relPath)
-      case TypeTag.Double ⇒ relConfig.getDouble(relPath)
-      case TypeTag.Long ⇒ relConfig.getLong(relPath)
-      case TypeTag.Float ⇒ relConfig.getDouble(relPath).toFloat
-      case TypeTag.AnyRef | TypeTag.Object ⇒ relConfig.getAnyRef(relPath)
-      case _ ⇒ typeOf[A] match {
-        case t if t =:= typeOf[String] ⇒ relConfig.getString(relPath)
-        case t if t =:= typeOf[Duration] ⇒ relConfig.getDuration(relPath)
-        case t if t =:= typeOf[Path] ⇒ Paths.get(relConfig.getString(relPath))
-        case t if t =:= typeOf[File] ⇒ Paths.get(relConfig.getString(relPath)).toFile
-        case t if t =:= typeOf[TConfig] ⇒ relConfig.getConfig(relPath) // backdoor
-        case t if t =:= typeOf[Nothing] ⇒
-          throw new ConfigException.Generic("Missing type parameter at call site.")
-        case t ⇒
-          throw new ConfigException.Generic(s"Converting properties to type '$t' is not supported.")
-      }
-    }).asInstanceOf[A]
+  def as[A: ConfigReader] = {
+    val reader = implicitly[ConfigReader[A]]
+    reader(relPath, relConfig)
   }
 
   /** Special case accessor for values defined in config using typical memory size suffixes (G, M, K etc.)*/
@@ -101,7 +78,7 @@ class SSConfig(relPath: String = "", relConfig: TConfig = ConfigFactory.load()) 
    * @tparam A expected type as type parameter
    * @return configuration value
    */
-  def asOption[A: TypeTag] = {
+  def asOption[A: ConfigReader] = {
     if(relConfig.hasPath(relPath)) Some(as[A])
     else None
   }

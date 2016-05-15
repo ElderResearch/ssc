@@ -1,10 +1,12 @@
 package eri.commons.config
 
 import java.io.File
-import java.nio.file.{Paths, Path}
+import java.net.{ UnknownHostException, InetAddress }
+import java.nio.file.{ Paths, Path }
 import java.time.Duration
+import java.util.UUID
 
-import com.typesafe.config.{ConfigException, ConfigFactory}
+import com.typesafe.config.{ ConfigException, ConfigFactory }
 import org.scalatest.FunSpec
 
 /**
@@ -60,8 +62,22 @@ class SSConfigTest extends FunSpec {
       assert(conf.system.userhome.as[Path] === Paths.get(sys.props("user.home")))
       assert(conf.system.userhome.as[File] === Paths.get(sys.props("user.home")).toFile)
     }
-    it("should support system properties") {
-      println(conf.java.runtime.name.as[String])
+    it("should support UUIDs") {
+      val uuid = conf.extended.uuid.as[UUID]
+      assert(uuid.version() === 4)
+
+      intercept[IllegalArgumentException] {
+        conf.extended.notUuid.as[UUID]
+      }
+    }
+    it("should support InetAddress") {
+      val addr1 = conf.extended.addr1.as[InetAddress]
+      val addr2 = conf.extended.addr2.as[InetAddress]
+      val addr3 = conf.extended.addr3.as[InetAddress]
+
+      intercept[UnknownHostException] {
+        conf.extended.notAddr.as[InetAddress]
+      }
     }
   }
   describe("behavior of missing or `Option`al config values") {
@@ -76,6 +92,12 @@ class SSConfigTest extends FunSpec {
       intercept[ConfigException] {
         conf.system.oops.as[String]
       }
+    }
+  }
+  describe("miscellaneous features") {
+    val conf = new SSConfig()
+    it("should support system properties") {
+      println(conf.java.runtime.name.as[String])
     }
   }
 }
