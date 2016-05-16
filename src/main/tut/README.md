@@ -4,6 +4,7 @@ _Typesafe Config wrapped in a [`Dynamic`][dsd] blanket._
 
 [![Build Status](https://travis-ci.org/ElderResearch/ssc.svg?branch=master)](https://travis-ci.org/ElderResearch/ssc)
 [ ![Download](https://api.bintray.com/packages/elderresearch/OSS/ssc/images/download.svg) ](https://bintray.com/elderresearch/OSS/ssc/_latestVersion)
+[![Gitter](https://badges.gitter.im/ElderResearch/ssc.svg)](https://gitter.im/ElderResearch/ssc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Overview
 
@@ -118,7 +119,7 @@ val src =
     | stringVal = "Ceci n'est pas une pipe."
     | durationVal = 400ns
     | sizeVal = 0.5GB
-    | sizeVals = [ 0.5K, 1M, 2G, 3T, 4P ] 
+    | sizeVals = [ 0.5K, 1M, 2G, 3T, 4P ]
     | pathVal = /dev/null
     | fileVal = /dev/zero
     | addrVal = 192.168.34.42
@@ -146,7 +147,7 @@ Access to the underlying `Config` object is also supported:
 val cv: Config = conf.configVal.as[Config]
 ```
 
-#### Extended Type Support 
+#### Extended Type Support
 
 In addition to the types supported by _Typesafe Config_, converters for some additional Java types are provided (see [Defining New Readers](#defining-new-readers) below for instructions on adding your own.):
 
@@ -166,10 +167,10 @@ val times = conf.timeVals.as[Seq[Duration]]
 val sizes = conf.sizeVals.as[Seq[ConfigMemorySize]]
 ```
 
-### Defining New `Reader`s 
+### Defining New `Reader`s
 
 Both standard and core types are extracted through the `as[T]` and `asOption[T]` methods via [`ConfigReader[T]`](src/main/scala/eri/commons/config/ConfigReader.scala) and `StringReader[T]` type classes. To define a converter from a `String` to your desired type `Foo`, place in scope an `implicit` instance of `StringReader[Foo]`. For example, supposed we wanted to support reading in a phone number type:  
- 
+
 ```tut:book
 case class PhoneNumber(countryCode: Int, areaCode: Int, exchange: Int, extension: Int)
 implicit object PhoneReader extends StringReader[PhoneNumber] {
