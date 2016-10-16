@@ -1,8 +1,9 @@
+
 name := "Simple Scala Config"
 
 moduleName := "ssc"
 
-version := "0.2.0"
+version := "1.0.0"
 
 organization := "com.elderresearch"
 
@@ -10,15 +11,15 @@ licenses := Seq(("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.
 
 scalaVersion := "2.11.8"
 
-scalacOptions += "-target:jvm-1.8"
+crossScalaVersions := Seq("2.11.8", "2.12.0-RC1")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" %  "scala-reflect"  % scalaVersion.value,
-  "com.typesafe" % "config" % "1.3.0",
-  "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+  "com.typesafe" % "config" % "1.3.1",
+  "org.scalatest" % "scalatest" % "3.0.0" cross CrossVersion.binary
 )
 
-publishMavenStyle := false
+publishMavenStyle := true
 
 bintrayOrganization := Some("elderresearch")
 

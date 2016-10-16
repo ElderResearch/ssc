@@ -52,17 +52,17 @@ _Simple Scala Config_ is able to do this via the use of Scala's [`Dynamic`][dsd]
 
 ## Using
 
-The library is published via bintray. Add this to your sbt build definitions:
+The library is published via bintray, cross compiled against Scala **2.11.8** and **2.12.0-RC1**. To use, add this to your sbt build definitions:
 
 ```scala
 resolvers += Resolver.bintrayRepo("elderresearch", "OSS")
-libraryDependencies += "com.elderresearch" %% "ssc" % "0.2.0"
+libraryDependencies += "com.elderresearch" %% "ssc" % "1.0.0"
 ```
 
 It will transitively pull in the Typesafe Config and Scala Reflection libraries:
 
 ```scala
-"com.typesafe" % "config" % "1.3.0"
+"com.typesafe" % "config" % "1.3.1"
 "org.scala-lang" %  "scala-reflect"  % scalaVersion.value
 ```
 

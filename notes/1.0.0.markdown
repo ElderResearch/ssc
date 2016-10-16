@@ -1,0 +1,4 @@
+## Changes
+
+* Upgraded to `"com.typesafe" % "config" % "1.3.1"`
+* Cross compiled against Scala "2.11.8" and "2.12.0-RC1"
