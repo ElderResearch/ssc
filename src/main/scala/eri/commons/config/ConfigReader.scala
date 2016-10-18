@@ -99,6 +99,9 @@ object ConfigReader {
   implicit object ConfigReader extends ConfigReader[Config] {
     def apply(path: String, config: Config): Config = config.getConfig(path)
   }
+  implicit object ConfigSeqReader extends ConfigReader[Seq[Config]] {
+    def apply(path: String, config: Config): Seq[Config] = config.getConfigList(path)
+  }
   implicit object AnyRefReader extends ConfigReader[AnyRef] {
     def apply(path: String, config: Config): AnyRef = config.getObject(path)
   }
