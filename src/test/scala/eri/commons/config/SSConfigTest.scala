@@ -6,7 +6,7 @@ import java.nio.file.{Path, Paths}
 import java.time.Duration
 import java.util.UUID
 
-import com.typesafe.config.{ConfigException, ConfigFactory, ConfigMemorySize}
+import com.typesafe.config.{Config, ConfigException, ConfigFactory, ConfigMemorySize}
 import org.scalatest.FunSpec
 
 /**
@@ -113,6 +113,9 @@ class SSConfigTest extends FunSpec {
     }
     it("should support Inet address sequence") {
       assert(conf.extended.addresses.as[Seq[InetAddress]] === Seq("192.168.32.42", "0:0:0:0:0:0:0:1").map(InetAddress.getByName))
+    }
+    it("should support config sequence") {
+      assert(conf.configs.list.as[Seq[Config]] === Seq(ConfigFactory.parseString("""{"a" : "b"}"""), ConfigFactory.parseString("""{"c" : "d"}""")))
     }
 
   }
