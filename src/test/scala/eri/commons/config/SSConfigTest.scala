@@ -138,4 +138,27 @@ class SSConfigTest extends FunSpec {
       assert(phone.extension === 1212)
     }
   }
+  describe("leniency") {
+    val conf = new SSConfig(lenient = true)
+    it("should support lookups converted to all lower or upper case") {
+      assert(conf.nameinlowercase.as[String] === "valueinlowercase")
+      assert(conf.NAMEINLOWERCASE.as[String] === "valueinlowercase")
+      assert(conf.nameInLowerCase.as[String] === "valueinlowercase")
+      assert(conf.nameinuppercase.as[String] === "VALUEINUPPERCASE")
+      assert(conf.NAMEINUPPERCASE.as[String] === "VALUEINUPPERCASE")
+      assert(conf.nameInUpperCase.as[String] === "VALUEINUPPERCASE")
+    }
+    it("should support names with underscores") {
+      assert(conf.name_with_underscore.as[String] === "value_with_underscore")
+    }
+    it("should support names with underscores if written as camelCase") {
+      assert(conf.nameWithUnderscore.as[String] === "value_with_underscore")
+    }
+    it("should support names with dashes if written as symbol") {
+      assert(conf.`name-with-dash`.as[String] === "value-with-dash")
+    }
+    it("should support names with dashes if written as camelCase") {
+      assert(conf.nameWithDash.as[String] === "value-with-dash")
+    }
+  }
 }

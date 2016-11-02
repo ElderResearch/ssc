@@ -15,8 +15,7 @@
 
 package eri.commons.config
 
-import com.typesafe.config.{Config ⇒ TConfig, ConfigException, ConfigFactory}
-
+import com.typesafe.config.{ConfigException, ConfigFactory, Config ⇒ TConfig}
 import scala.language.dynamics
 
 /**
@@ -30,6 +29,10 @@ import scala.language.dynamics
  *       other {
  *           fred = "fun"
  *       }
+  *      dashed-name = 23
+  *      underscored_name = "happy"
+  *      lowercased = false
+  *      UPPERCASED = true
  *   }
  * }}}
  *
@@ -49,12 +52,22 @@ import scala.language.dynamics
  *   val n2 = Config2.other.fred.as[String]
  * }}}
  *
+ * If created with lenient set to true dashed (i.e. foo-bar), underscored (i.e. foo_bar), all uppercased (i.e. FOO) and all lowercased config keys can be looked up via camelCased (i.e. fooBar) identifiers:
+ * {{{
+  *   object Config3 extends SSConfig(lenient = true)
+  *   val i = Config3.farmer.fred.dashedName.as[Int]
+  *   val s = Config3.farmer.fred.underscoredName.as[String]
+  *   val b1 = Config3.farmer.fred.lowerCased.as[Boolean]
+  *   val b2 = Config3.farmer.fred.upperCased.as[Boolean]
+ * }}}
+ *
  * @param relPath Scoping path specifier
  * @param relConfig Configuration data
+ * @param lenient Use lenient lookup (default is false)
  * @author <a href="mailto:fitch@datamininglab.com">Simeon H.K. Fitch</a>
  * @since 3/24/16
  */
-class SSConfig(relPath: String = "", relConfig: TConfig = ConfigFactory.load()) extends Dynamic {
+class SSConfig(relPath: String = "", relConfig: TConfig = ConfigFactory.load(), lenient: Boolean = false) extends Dynamic {
   def this(config: TConfig) = this("", config)
 
   /**
@@ -85,6 +98,27 @@ class SSConfig(relPath: String = "", relConfig: TConfig = ConfigFactory.load()) 
     val next = if (relPath.nonEmpty && relConfig.hasPath(relPath))
       relConfig.getConfig(relPath)
     else relConfig
-    new SSConfig(name, next)
+    new SSConfig(aliases(name).find(next.hasPath).getOrElse(name), next)
+  }
+
+  private[this] def aliases(name: String): Seq[String] = {
+    if (!lenient) Seq(name, name.toLowerCase(), name.toUpperCase)
+    else {
+      val dashed = StringBuilder.newBuilder
+      val underscored = StringBuilder.newBuilder
+      var current: Char = 0
+      var i: Int = 0
+      while (i < name.length) {
+        current = name.charAt(i)
+        if (i > 0 && current.isUpper) {
+          dashed.append('-')
+          underscored.append('_')
+        }
+        dashed.append(current.toLower)
+        underscored.append(current.toLower)
+        i += 1
+      }
+      Seq(name, dashed.mkString, underscored.mkString, name.toLowerCase(), name.toUpperCase).distinct
+    }
   }
 }
