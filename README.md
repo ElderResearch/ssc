@@ -1,5 +1,7 @@
 # Simple Scala Config
 
+[![Join the chat at https://gitter.im/ElderResearch/ssc](https://badges.gitter.im/ElderResearch/ssc.svg)](https://gitter.im/ElderResearch/ssc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 _Typesafe Config wrapped in a [`Dynamic`][dsd] blanket._
 
 [![Build Status](https://travis-ci.org/ElderResearch/ssc.svg?branch=master)](https://travis-ci.org/ElderResearch/ssc)
