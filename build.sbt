@@ -11,7 +11,7 @@ licenses := Seq(("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.
 
 scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.11.8", "2.12.0-RC1")
+crossScalaVersions := Seq("2.11.8", "2.12.3")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" %  "scala-reflect"  % scalaVersion.value,
