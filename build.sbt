@@ -16,7 +16,7 @@ crossScalaVersions := Seq("2.11.8", "2.12.3")
 libraryDependencies ++= Seq(
   "org.scala-lang" %  "scala-reflect"  % scalaVersion.value,
   "com.typesafe" % "config" % "1.3.1",
-  "org.scalatest" % "scalatest" % "3.0.0" cross CrossVersion.binary
+  "org.scalatest" % "scalatest" % "3.0.0" % Test cross CrossVersion.binary
 )
 
 publishMavenStyle := true
