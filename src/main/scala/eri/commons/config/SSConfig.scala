@@ -82,9 +82,11 @@ class SSConfig(relPath: String = "", relConfig: TConfig = ConfigFactory.load()) 
 
   /** Traversal magic as supported by `scala.Dynamic`. */
   def selectDynamic(name: String) = {
-    val next = if (relPath.nonEmpty && relConfig.hasPath(relPath))
-      relConfig.getConfig(relPath)
-    else relConfig
+    val next = relPath.nonEmpty match {
+      case false => relConfig
+      case true if relConfig.hasPath(relPath + "." + name) => relConfig.getConfig(relPath)
+      case _ => ConfigFactory.empty()
+    }
     new SSConfig(name, next)
   }
 }
