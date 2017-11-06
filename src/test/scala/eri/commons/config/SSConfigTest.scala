@@ -93,6 +93,12 @@ class SSConfigTest extends FunSpec {
         conf.system.oops.as[String]
       }
     }
+    it("should treat nested name properly") {
+      assert(conf.ints.fortyTwo.asOption[Int] === Some(42))
+      assert(conf.ints.foo.fortyTwo.asOption[Int] === None)
+      assert(conf.akka.actor.typed.timeout.asOption[String] === Some("2s"))
+      assert(conf.akka.actor.typed.timeout.foo.asOption[Int] === None)
+    }
   }
   describe("sequence configuration types") {
     val conf = new SSConfig()
