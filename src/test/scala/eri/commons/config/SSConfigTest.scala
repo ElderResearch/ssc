@@ -123,6 +123,20 @@ class SSConfigTest extends FunSpec {
     it("should support config sequence") {
       assert(conf.configs.list.as[Seq[Config]] === Seq(ConfigFactory.parseString("""{"a" : "b"}"""), ConfigFactory.parseString("""{"c" : "d"}""")))
     }
+    it("should support sequences of arbitrary objects") {
+      case class CustomObject(name: String, location: String)
+
+      class CustomObjectReader extends ConfigReader[CustomObject] {
+        override def apply(path: String, config: Config): CustomObject = {
+          val ssConfig = new SSConfig("", config)
+          CustomObject(ssConfig.name.as[String], ssConfig.location.as[String])
+        }
+      }
+
+      implicit val CustomObjectReader: CustomObjectReader = new CustomObjectReader()
+      implicit val CustomObjectSeqReader = ConfigReader.customConfigSeqReaderFromConfig[CustomObject]
+      assert(conf.custom.objects.as[Seq[CustomObject]] === Seq(CustomObject("Object 1", "Building 1"), CustomObject("Object 2", "Building 2")))
+    }
 
   }
   describe("miscellaneous features") {
