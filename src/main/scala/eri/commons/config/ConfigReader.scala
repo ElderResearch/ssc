@@ -119,10 +119,19 @@ object ConfigReader {
   }
 
   /** Given a `StringReader[T]`, creates a `ConfigReader[Seq[T]]` */
-  implicit def customConfigSeqReader[T: StringReader]: ConfigReader[Seq[T]] = new ConfigReader[Seq[T]] {
+  implicit def customConfigSeqReaderFromString[T: StringReader]: ConfigReader[Seq[T]] = new ConfigReader[Seq[T]] {
     def apply(path: String, config: Config): Seq[T] = {
       val reader = implicitly[StringReader[T]]
       config.getStringList(path).map(reader.apply)
+    }
+  }
+
+  /** Given a `ConfigReader[T]`, creates a `ConfigReader[Seq[T]]` -
+    * NOTE: This cannot be implicit because it conflicts with customConfigSeqReaderFromString above. */
+  def customConfigSeqReaderFromConfig[T: ConfigReader]: ConfigReader[Seq[T]] = new ConfigReader[Seq[T]] {
+    def apply(path: String, config: Config): Seq[T] = {
+      val reader = implicitly[ConfigReader[T]]
+      config.getObjectList(path).map(obj => reader.apply("", obj.toConfig))
     }
   }
 }
