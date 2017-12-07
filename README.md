@@ -227,6 +227,39 @@ implicit object PhoneReader extends StringReader[PhoneNumber] {
 val phone = conf.phoneVal.as[PhoneNumber]
 // phone: PhoneNumber = PhoneNumber(1,881,555,1212)
 ```
+As another example, suppose we wanted to support reading in a custom object with `name` and 
+`location` values from a config block like the one below.
+```
+  custom {
+    objects: [
+      {
+        name: "Object 1",
+        location: "Building 1"
+      },
+      {
+        name: "Object 2",
+        location: "Building 2"
+      }
+    ]
+  }
+```
+
+declare the following readers using the `ConfigReader.customConfigSeqReaderFromConfig` helper 
+method to make it work:
+```scala
+case class CustomObject(name: String, location: String)
+
+implicit object CustomObjectReader extends ConfigReader[CustomObject] {
+  override def apply(path: String, config: Config): CustomObject = {
+    val ssConfig = new SSConfig("", config)
+    CustomObject(ssConfig.name.as[String], ssConfig.location.as[String])
+  }
+}
+// ConfigReader for an arbitrary Class
+
+implicit val CustomObjectSeqReader = ConfigReader.customConfigSeqReaderFromConfig[CustomObject]
+// Register a Seq reader for the arbitrary class created using the helper method
+```
 
 ## License
 
